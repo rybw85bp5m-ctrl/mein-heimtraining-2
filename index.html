@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173b32">
+<meta name="description" content="Dein persönlicher Trainingsplan für zuhause mit einer Hantel.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Mein Heimtraining</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#17231e;--muted:#65736b;--accent:#176b50;--line:#dce5df}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#173b32;color:white;padding:24px 18px 20px}header small{opacity:.8;letter-spacing:.08em}header h1{margin:7px 0;font-size:27px}header p{margin:0;opacity:.85}
+main{max-width:720px;margin:auto;padding:15px;display:grid;gap:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 2px 8px #173b3208}
+.stat{text-align:center}.stat strong{display:block;font-size:24px}.muted{color:var(--muted);font-size:13px}
+nav{display:flex;gap:7px}button{font:inherit;border:1px solid var(--line);background:white;color:var(--ink);border-radius:11px;padding:11px 13px;cursor:pointer}
+nav button{flex:1;font-size:14px}button.active{background:#e2f0e9;border-color:#80b39b;color:#14543f}.primary{background:var(--accent);border-color:var(--accent);color:white;font-weight:650}
+.segment{display:flex;gap:8px}.segment button{flex:1}
+h2{font-size:19px;margin:0 0 5px}.exercise{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.exercise:last-child{border:0}
+.exercise input{width:21px;height:21px;accent-color:var(--accent);margin-top:2px;flex-shrink:0}
+.exercise b{display:block}.exercise small{display:block;color:var(--muted);margin-top:3px}
+.progress{height:8px;background:var(--line);border-radius:20px;overflow:hidden;margin:12px 0 5px}.progress div{height:100%;background:var(--accent);width:0;transition:width .2s}
+.row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}
+[hidden]{display:none!important}.wide{width:100%;margin-top:12px}.note{font-size:13px;color:var(--muted);line-height:1.5}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 0 25px}
+.installhint{background:#e2f0e9;border:1px solid #b5d6c3;color:#174b38;border-radius:12px;padding:12px;font-size:13px;line-height:1.45}
+@media(prefers-color-scheme:dark){:root{--bg:#101815;--card:#19231e;--ink:#edf4ef;--muted:#a5b4aa;--line:#34443a}button{background:#202d26;color:var(--ink)}button.active{background:#234b39;color:#e9fff2}.progress{background:#34443a}.installhint{background:#203b2d;color:#e9fff2;border-color:#426c54}}
+</style>
+</head>
+<body>
+<header><small>DEIN FITNESSPROGRAMM</small><h1>🏋️ Mein Heimtraining</h1><p>30 Minuten · eine Hantel · 2–10 kg</p></header>
+<main>
+ <div class="installhint" id="installHint">Tipp: In Safari auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen, um die App abzulegen.</div>
+ <section class="stats">
+  <div class="card stat"><strong>30</strong><span class="muted">Minuten</span></div>
+  <div class="card stat"><strong>3</strong><span class="muted">Trainingstage/Woche</span></div>
+  <div class="card stat"><strong id="completed">0</strong><span class="muted">Absolviert</span></div>
+ </section>
+ <nav><button class="active" data-tab="plan">Trainingsplan</button><button data-tab="week">Wochenplan</button><button data-tab="progress">Fortschritt</button></nav>
+ <section id="plan" class="card">
+  <div class="segment"><button class="active" data-workout="A">Training A</button><button data-workout="B">Training B</button></div>
+  <div style="margin-top:16px"><h2 id="workoutTitle">Training A</h2><div class="muted">Ganzkörper · Einsteiger</div></div>
+  <div class="progress"><div id="exerciseProgress"></div></div><div class="muted" id="exerciseCount">0 von 5 Übungen erledigt</div>
+  <div id="exerciseList"></div>
+  <button class="primary wide" id="finishWorkout">Training abschließen</button><p class="note" id="workoutMessage">Hake jede Übung ab, sobald du sie absolviert hast.</p>
+ </section>
+ <section id="week" class="card" hidden><h2>Deine Trainingswoche</h2><p class="muted">In der Folgewoche wechselst du auf B – A – B.</p><div id="weekList"></div><p class="note">Dienstag und Donnerstag sind Pausentage. Samstag leichte Bewegung, Sonntag Ruhetag.</p></section>
+ <section id="progress" hidden>
+  <div class="card"><h2>Dein Fortschritt</h2><strong style="font-size:38px" id="totalCount">0</strong><div class="muted">Trainings abgeschlossen</div><div class="progress"><div id="totalBar"></div></div><p class="note" id="totalText">Dein nächstes Ziel: 3 Trainings</p></div>
+  <div class="card" style="margin-top:12px"><h2>Deine 4 Wochen</h2><div id="weeksProgress"></div></div>
+  <button id="reset" class="wide">Fortschritt zurücksetzen</button>
+ </section>
+ <section class="card"><h2>⏱️ Zeitplan</h2><div class="row"><span>Aufwärmen</span><b>5 Min.</b></div><div class="row"><span>Kraftübungen</span><b>20 Min.</b></div><div class="row"><span>Locker bewegen / dehnen</span><b>5 Min.</b></div><p class="note">Zwischen den Sätzen 60–90 Sekunden pausieren. Bei Bedarf länger. Wähle ein Gewicht, mit dem du die Bewegung kontrolliert ausführen kannst. Bei Schmerzen, Schwindel oder ungewöhnlicher Erschöpfung aufhören.</p></section>
+ <footer>Dein Trainingsplan für zuhause · Fortschritt wird auf diesem Gerät gespeichert.</footer>
+</main>
+<script>
+const exercises={
+ A:[['Kniebeugen mit Hantel','2 × 10 Wiederholungen','Startgewicht: 4–6 kg'],['Einarmiges Rudern','2 × 10 je Arm','Startgewicht: 4–6 kg'],['Schulterdrücken','2 × 10 je Arm','Startgewicht: 2–4 kg'],['Brustdrücken am Boden','2 × 10 je Arm','Startgewicht: 2–4 kg'],['Dead Bug','2 × 8 je Seite','Ohne Gewicht']],
+ B:[['Kreuzheben mit Hantel','2 × 12 Wiederholungen','Startgewicht: 4–6 kg'],['Bizepscurls','2 × 10 je Arm','Startgewicht: 2–4 kg'],['Trizepsstrecken','2 × 10 Wiederholungen','Startgewicht: 2 kg'],['Rückwärts-Ausfallschritte','2 × 8 je Bein','Zunächst ohne Gewicht'],['Bird Dog','2 × 8 je Seite','Ohne Gewicht']]
+};
+const days=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+const weekItems=['🏋️ Training A','🌿 Pause','🏋️ Training B','🌿 Pause','🏋️ Training A','🚶 Spaziergang / leichte Bewegung','😌 Ruhetag'];
+const blank=()=>({completed:0,history:[],week:1,checked:{A:[],B:[]}});
+let state;try{state=JSON.parse(localStorage.getItem('heimtraining-state'))||blank()}catch(e){state=blank()}
+let selected='A';const $=id=>document.getElementById(id);
+function save(){try{localStorage.setItem('heimtraining-state',JSON.stringify(state))}catch(e){}}
+function render(){
+ $('workoutTitle').textContent='Training '+selected;
+ $('exerciseList').innerHTML=exercises[selected].map((e,i)=>`<label class="exercise"><input type="checkbox" data-index="${i}" ${state.checked[selected].includes(i)?'checked':''}><span><b>${i+1}. ${e[0]}</b><small>${e[1]}</small><small>${e[2]}</small></span></label>`).join('');
+ const n=state.checked[selected].length;$('exerciseProgress').style.width=(n/5*100)+'%';$('exerciseCount').textContent=n+' von 5 Übungen erledigt';
+ $('completed').textContent=state.completed;$('totalCount').textContent=state.completed;$('totalBar').style.width=Math.min(state.completed/12,1)*100+'%';
+ $('totalText').textContent=state.completed>=12?'Stark! 12 Trainings geschafft!':'Dein nächstes Ziel: '+(Math.floor(state.completed/3)+1)*3+' Trainings';
+ $('weekList').innerHTML=days.map((d,i)=>`<div class="row"><span>${d}</span><b>${weekItems[i]}</b></div>`).join('');
+ $('weeksProgress').innerHTML=[1,2,3,4].map(w=>{let n=state.history.filter(x=>x.week===w).length;return `<div style="margin-top:13px"><div class="row"><b>Woche ${w}</b><span>${Math.min(n,3)}/3 Trainings</span></div><div class="progress"><div style="width:${Math.min(n,3)/3*100}%"></div></div></div>`}).join('');
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['plan','week','progress'].forEach(id=>$(id).hidden=id!==b.dataset.tab)}));
+document.querySelectorAll('[data-workout]').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.workout;document.querySelectorAll('[data-workout]').forEach(x=>x.classList.toggle('active',x===b));$('workoutMessage').textContent='Hake jede Übung ab, sobald du sie absolviert hast.';render()}));
+$('exerciseList').addEventListener('change',e=>{if(!e.target.matches('input'))return;let i=+e.target.dataset.index;state.checked[selected]=e.target.checked?[...state.checked[selected],i]:state.checked[selected].filter(x=>x!==i);save();render()});
+$('finishWorkout').addEventListener('click',()=>{if(state.checked[selected].length!==5){$('workoutMessage').textContent='Bitte hake zuerst alle 5 Übungen ab.';return}state.completed++;state.history.push({type:selected,week:state.week});state.checked[selected]=[];state.week=Math.min(4,Math.floor(state.completed/3)+1);save();$('workoutMessage').textContent='Training abgeschlossen – gut gemacht!';render()});
+$('reset').addEventListener('click',()=>{if(!confirm('Möchtest du deinen gesamten Fortschritt zurücksetzen?'))return;state=blank();save();render()});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+render();
+</script>
+</body></html>
